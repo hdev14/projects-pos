@@ -4,15 +4,15 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot
 
-data = pd.read_excel('simple_linear_regression/ice_cream_dataset.xlsx')
+dataset = pd.read_excel('simple_linear_regression/ice_cream_dataset.xlsx')
 
-pyplot.scatter(data['temperature'], data['sales']);
+pyplot.scatter(dataset['temperature'], dataset['sales']);
 pyplot.xlabel('Temperature (°C)')
 pyplot.ylabel('Ice Cream Sales (thousands)')
 pyplot.title('Ice Cream Sales vs Temperature')
 pyplot.show()
 
-X_train, X_test, y_train, y_test = train_test_split(data[['temperature']], data['sales'], test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(dataset[['temperature']], dataset['sales'], test_size=0.2, random_state=42)
 
 model = LinearRegression()
 model.fit(X_train, y_train)
