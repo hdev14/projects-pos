@@ -5,11 +5,12 @@ import matplotlib
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, StandardScaler
+from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, StandardScaler, LabelEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from mape import mean_absolute_percentage_error
 
 housing_dataset = pandas.read_csv("./mult_linear_regression/housing_dataset.csv")
 
@@ -139,25 +140,36 @@ print(simple_imputer.strategy)
 
 housing_train_dataset_categorical = housing_train_dataset[["ocean_proximity"]]
 
-# print(housing_train_dataset_categorical.head(10))
+print("housing_train_dataset_categorical:\n", housing_train_dataset_categorical.head(10))
 
 ordinal_encoder = OrdinalEncoder()
 housing_train_dataset_categorical_encoded = ordinal_encoder.fit_transform(housing_train_dataset_categorical)
+print("Ordinal Encoded Categories:")
 print(housing_train_dataset_categorical_encoded[:10])
 print(ordinal_encoder.categories_)
 
 one_hot_encoder = OneHotEncoder(sparse_output=False)
 housing_train_dataset_categorical_one_hot = one_hot_encoder.fit_transform(housing_train_dataset_categorical)
+print("One-Hot Encoded Categories:")
 print(housing_train_dataset_categorical_one_hot[:10])
 print(one_hot_encoder.categories_)
 
+label_encoder = LabelEncoder()
+housing_train_dataset_categorical_label_encoded = label_encoder.fit_transform(housing_train_dataset_categorical)
+print("Label Encoded Categories:")
+print(housing_train_dataset_categorical_label_encoded[:10])
+print(label_encoder.classes_)
 
 number_pipeline = Pipeline([
   ('imputer', SimpleImputer(strategy="median")),
   ('scaler', StandardScaler())
 ])
 
+print("Houseing train dataset numbers before treatment:\n", housing_train_dataset_numbers.head())
+
 housing_train_dataset_numbers_treated = number_pipeline.fit_transform(housing_train_dataset_numbers)
+
+print("Houseing train dataset numbers after treatment:\n", housing_train_dataset_numbers_treated[:10])
 
 attributes_numbers = housing_train_dataset_numbers.columns
 attributes_categorical = ["ocean_proximity"]
@@ -207,9 +219,4 @@ print("Root Mean Squared Error:", rmse)
 print("Mean Absolute Error:", mae)
 print("R² Score:", r2)
 
-def mean_absolute_percentage_error(labels, predictions):
-  error = numpy.abs((labels - predictions) / labels)
-  return numpy.mean(error) * 100
-
-mape = mean_absolute_percentage_error(housing_test_labels, predictions)
-print(f"Mean Absolute Percentage Error: {mape:.2f}%")
+print(f"Mean Absolute Percentage Error: {mean_absolute_percentage_error(housing_test_labels, predictions):.2f}%")
